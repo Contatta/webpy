@@ -24,8 +24,8 @@ __all__ = [
     "badrequest", "unauthorized", "forbidden", "notfound", "nomethod", "notacceptable", "conflict", "gone", "preconditionfailed", "unsupportedmediatype",
 
     # 500, 503
-    "InternalError", "ServiceUnavailable"
-    "internalerror", "serviceunavailable"
+    "InternalError", "ServiceUnavailable",
+    "internalerror", "serviceunavailable",
 ]
 
 import sys, cgi, Cookie, pprint, urlparse, urllib
@@ -258,13 +258,24 @@ def InternalError(message=None):
 
 internalerror = InternalError
 
-class ServiceUnavailable(HTTPError):
-    """503 Service Unavailable error."""
+class _ServiceUnavailable(HTTPError):
+    """503 Internal Server Error`."""
     message = "service unavailable"
+
     def __init__(self, message=None):
         status = '503 Service Unavailable'
         headers = {'Content-Type': 'text/html'}
         HTTPError.__init__(self, status, headers, message or self.message)
+
+def ServiceUnavailable(message=None):
+    """Returns HTTPError with '503 service unavailable' error from the active application.
+    """
+    if message:
+        return _ServiceUnavailable(message)
+    elif ctx.get('app_stack'):
+        return ctx.app_stack[-1].serviceunavailable()
+    else:
+        return _ServiceUnavailable()
 
 serviceunavailable = ServiceUnavailable
 
