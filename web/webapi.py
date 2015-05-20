@@ -19,9 +19,9 @@ __all__ = [
     "Redirect", "Found", "SeeOther", "NotModified", "TempRedirect", 
     "redirect", "found", "seeother", "notmodified", "tempredirect",
 
-    # 400, 401, 403, 404, 405, 406, 409, 410, 412, 415
-    "BadRequest", "Unauthorized", "Forbidden", "NotFound", "NoMethod", "NotAcceptable", "Conflict", "Gone", "PreconditionFailed", "UnsupportedMediaType",
-    "badrequest", "unauthorized", "forbidden", "notfound", "nomethod", "notacceptable", "conflict", "gone", "preconditionfailed", "unsupportedmediatype",
+    # 400, 401, 403, 404, 405, 406, 409, 410, 412, 415, 429
+    "BadRequest", "Unauthorized", "Forbidden", "NotFound", "NoMethod", "NotAcceptable", "Conflict", "Gone", "PreconditionFailed", "UnsupportedMediaType", "TooManyRequests",
+    "badrequest", "unauthorized", "forbidden", "notfound", "nomethod", "notacceptable", "conflict", "gone", "preconditionfailed", "unsupportedmediatype", "toomanyrequests",
 
     # 500, 503
     "InternalError", "ServiceUnavailable",
@@ -236,6 +236,16 @@ class UnsupportedMediaType(HTTPError):
         HTTPError.__init__(self, status, headers, message or self.message)
 
 unsupportedmediatype = UnsupportedMediaType
+
+class TooManyRequests(HTTPError):
+    """`429 Unsupported Media Type` error."""
+    message = "too many requests"
+    def __init__(self, message=None):
+        status = "429 Too Many Requests"
+        headers = {'Content-Type': 'text/html'}
+        HTTPError.__init__(self, status, headers, message or self.message)
+
+toomanyrequests = TooManyRequests
 
 class _InternalError(HTTPError):
     """500 Internal Server Error`."""
